@@ -21,15 +21,20 @@ if __name__ == "__main__":
     args = parser.parse_args()
     base_folder = args.source_path
 
-    save_path = os.path.join(base_folder, "normals")
-    folder_path = os.path.join(base_folder, "images")
+    save_path = os.path.join(base_folder, "normals_4")
+    folder_path = os.path.join(base_folder, "images_4")
 
-    image_paths = sorted(glob.glob(os.path.join(folder_path, "*.jpg")))
+    # image_paths = sorted(glob.glob(os.path.join(folder_path, "*.png")))
+        
+    # if len(image_paths) == 0:
+    # image_paths = sorted(glob.glob(os.path.join(folder_path, "*.jpg")))
+    image_paths = sorted(glob.glob(os.path.join(folder_path, "*.JPG")))
+
     print(image_paths)  
     if len(image_paths) == 0:
         print("no image found in ", folder_path)
         exit(0)
-    print("results will be saved in ", save_path, "total", len(image_paths), "images")
+    print("results will be saved in ", save_path, "total", len(image_paths), "images_4")
 
     if not args.skip_normal:
         # Create predictor instance
@@ -54,7 +59,7 @@ if __name__ == "__main__":
         predictor = torch.hub.load("Stable-X/StableDelight", "StableDelight_turbo", trust_repo=True)
         print("StableDelight model loaded")
 
-        save_path = os.path.join(base_folder, "delights")
+        save_path = os.path.join(base_folder, "delights_4")
         if not os.path.exists(save_path):
             os.makedirs(save_path)
 
