@@ -14,9 +14,9 @@ def process_image(predictor, input_image_path, output_image_path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--source_path", "-s", type=str, help="source path", required=True, default="data/Anisotropic-Synthetic-Dataset/ashtray")
-    parser.add_argument("--skip_normal", help="skip normal", action="store_true")
-    parser.add_argument("--skip_delight", help="skip delight", action="store_true")
+    parser.add_argument("--source_path", "-s", type=str, help="source path", required=True, default="/media/wangsc/T7/datasets/dtu_dataset/dtu/scan24")
+    parser.add_argument("--skip_normal", default=False, help="skip normal", action="store_true")
+    parser.add_argument("--skip_delight", default=True, help="skip delight", action="store_true")
 
     args = parser.parse_args()
     base_folder = args.source_path
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     save_path = os.path.join(base_folder, "normals")
     folder_path = os.path.join(base_folder, "images")
 
-    image_paths = sorted(glob.glob(os.path.join(folder_path, "*.png")))
+    image_paths = sorted(glob.glob(os.path.join(folder_path, "*.jpg")))
     print(image_paths)  
     if len(image_paths) == 0:
         print("no image found in ", folder_path)
@@ -43,8 +43,7 @@ if __name__ == "__main__":
         for image_path in tqdm(image_paths):
             process_image(predictor=predictor, 
                         input_image_path=image_path, 
-                        output_image_path=os.path.join(save_path, os.path.basename(image_path).replace(".png", "_normal.png")), 
-                        mask_path=None)
+                        output_image_path=os.path.join(save_path, os.path.basename(image_path).replace(".png", "_normal.png")))
         print("process normal done, start process delight")
 
         del predictor
@@ -62,7 +61,6 @@ if __name__ == "__main__":
         for image_path in tqdm(image_paths):
             process_image(predictor=predictor, 
                         input_image_path=image_path, 
-                        output_image_path=os.path.join(save_path, os.path.basename(image_path).replace(".png", "_delight.png")), 
-                        mask_path=None)
+                        output_image_path=os.path.join(save_path, os.path.basename(image_path).replace(".png", "_delight.png")))
 
     print(f"normal and delight done, total {len(image_paths)} images, {base_folder}")
