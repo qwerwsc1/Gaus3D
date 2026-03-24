@@ -5,27 +5,27 @@ import bpy, math
 # ========= 1) 相机参数 =========
 
 cam_loc = (
--2.247744417912683, -0.25676986688509823, 3.3975459057555306
+1.339229422520551, 0.12313146366763014, -1.6957567974396548
 )
 cam_rot_deg = (
-341.99101750638033, 25.707031618386132, 178.7859940647626
+202.8382355792101, -25.92922725161774, -40.298237975762824
 )  # Euler XYZ, degrees
 
-focal_mm = 21.38         # Focal Length
+focal_mm = 67.04         # Focal Length
 shift_x, shift_y = 0.0, 0.0
 clip_start, clip_end = 0.1, 100.0
 
 # 分辨率（可选）
-res_x, res_y = 979, 545
+res_x, res_y = 777, 581
 
 # ========= 2) 灯光参数（Point Light） =========
 light_name   = "Light"
 light_type   = "POINT"     # 'POINT' / 'SUN' / 'SPOT' / 'AREA'
 light_loc    = (
--2.247744417912683, -0.25676986688509823, 3.3975459057555306
+1.339229422520551, 0.12313146366763014, -1.6957567974396548
 )
 light_rot_deg= (
-341.99101750638033, 25.707031618386132, 178.7859940647626
+202.8382355792101, -25.92922725161774, -40.298237975762824
 )  # 对 POINT 旋转无效
 power        = 110      # Power / Energy
 normalize    = True        # 仅对支持的光型设置（AREA/部分版本的SPOT）
@@ -95,48 +95,3 @@ if hasattr(L, "use_normalized") and light_type in {"AREA", "SPOT"}:
     L.use_normalized = normalize
 
 print("[OK] Camera & Light updated without errors.]")
-
-## 从json文件中提取信息，并将旋转矩阵转换成blender的欧拉角
-import json
-from scipy.spatial.transform import Rotation as R
-
-# ✅ 你提供的旋转转欧拉函数
-def rot_2_euler_in_blender(rotation_matrix):
-    r = R.from_matrix(rotation_matrix)
-    eu = r.as_euler('xyz', degrees=True)
-    eu[0] = eu[0] + 180  # X 加 180°
-    return eu
-
-
-def print_all_cameras(json_path):
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    def process_obj(obj):
-        if isinstance(obj, dict) and "rotation" in obj and "id" in obj:
-            print("\n=======================================")
-            print(f"Camera id: {obj['id']}")
-            print(json.dumps(obj, indent=4, ensure_ascii=False))
-
-            rot = obj["rotation"]
-            euler = rot_2_euler_in_blender(rot)
-
-            print("Euler XYZ (Degrees)：")
-            print(f"X = {euler[0]}")
-            print(f"Y = {euler[1]}")
-            print(f"Z = {euler[2]}")
-            print("=======================================\n")
-
-        if isinstance(obj, dict):
-            for v in obj.values():
-                process_obj(v)
-        elif isinstance(obj, list):
-            for v in obj:
-                process_obj(v)
-
-    process_obj(data)
-
-
-if __name__ == "__main__":
-    json_file = "/media/wangsc/T7/outputs/2dgs/outputs/dtu/scan105/cameras.json"
-    print_all_cameras(json_file)
